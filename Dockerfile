@@ -1,10 +1,19 @@
 FROM alpine:3.19
 
-RUN apk add python3
+    # Upstream DNS Resolver address
+ENV DNS_SERVER="1.1.1.1" \
+    # CA Certificates path
+    CA_CERT="/etc/ssl/cert.pem" \
+    # Address the DNS Proxy to listen on
+    HOST_ADDRESS="0.0.0.0" \
+    # Port the DNS Proxy to listen on
+    HOST_PORT=53
 
-COPY dnsproxy.py /opt/dnsproxy.py
+RUN apk add --no-cache python3
 
-EXPOSE 8053/tcp 8053/udp
+COPY src/* /opt/
+
+EXPOSE 8153/tcp 8153/udp
 
 ENTRYPOINT ["/usr/bin/python3"]
-CMD ["/opt/dnsproxy.py"]
+CMD ["/opt/__main__.py"]

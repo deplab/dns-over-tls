@@ -1,16 +1,9 @@
 import ssl
 import socket
 import socketserver
-import threading
-import time
-import sys
+import config
 
-# Cloudflare DNS Resolver address
-DNS_SERVER = "1.1.1.1"
-# CA Certificates available on alpine:3.19
-CA_CERT = "/etc/ssl/cert.pem"
-
-def request_handler(protocol, request, dns_server=DNS_SERVER, ca_cert=CA_CERT):
+def request_handler(protocol, request, dns_server=config.DNS_SERVER, ca_cert=config.CA_CERT):
     try:
         # Destination dns resolver listens on port 853 and supports TLS 1.2 and 1.3
         # Docs for Cloudflare DoT - https://developers.cloudflare.com/1.1.1.1/encryption/dns-over-tls
@@ -66,29 +59,3 @@ class udp_requester(socketserver.BaseRequestHandler):
             socket.sendto(request_handler("udp", request), self.client_address)
         except Exception as e:
             raise Exception(f"[ERROR] Got the following error while handling the request with the udp_requester: {str(e)}")
-
-if __name__ == "__main__":
-    HOST, PORT = "0.0.0.0", 53
-
-    servers = [
-        tcp_server((HOST, PORT), tcp_requester),
-        udp_server((HOST, PORT), udp_requester)
-    ]
-    # Run the TCP and UDP servers set above in a threaded fashion
-    for server in servers:
-        thread = threading.Thread(target=server.serve_forever)
-        thread.daemon = True
-        thread.start()
-    
-    # Keep waiting
-    try:
-        while True:
-            time.sleep(1)
-            sys.stderr.flush()
-            sys.stdout.flush()
-    except KeyboardInterrupt:
-        pass
-    # Shut down TCP and UDP servers
-    finally:
-        for server in servers:
-            server.shutdown()

@@ -2,7 +2,7 @@
 
 ### Contents
 1. [Summary](#1-summary)
-2. [Audience / Prerequisites](#2-audience-prerequisites)
+2. [Audience / Prerequisites](#2-audience--prerequisites)
     - [Before you start](#21-before-you-start)
 3. [Procedure](#3-procedure)
     - [Start the proxy](#31-start-the-proxy)
@@ -16,7 +16,7 @@ The conteiner is built with use of lightweight alpine and Python utilises only t
 The DNS over TLS proxy can be used to resolve DNS via a secure channel by any client including git, nslookup or a custom built client, etc..
 
 Overview
-![DNS over TLS Diagram](diagram.png)
+![DNS over TLS Diagram](files/diagram.png)
 
 The proxy listens on incoming DNS request via TCP and UDP and upstreams the requests to Cloudflare 1.1.1.1 secure resolver on port 853.
 Responses received from Cloudflare are parsed and presented to the user.
@@ -55,6 +55,11 @@ docker build -t dnsovertlsproxy:1 .
 # Note that the host machine port that the proxy will be listening on is 8153
 # This port can be changed to any other port that is not in use
 docker run -d -p 8153:53/tcp -p 8153:53/udp dnsovertlsproxy:1
+```
+`NOTE` The default Upstream DNS Server used is Cloudflare (IP address 1.1.1.1), to overwrite (to e.g. Google 8.8.8.8), use `-e DNS_SERVER=8.8.8.8`
+Example:
+```
+docker run -d -p 8153:53/tcp -p 8153:53/udp -e DNS_SERVER=8.8.8.8 dnsovertlsproxy:1
 ```
 
 #### 3.2. Test the proxy
