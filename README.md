@@ -16,6 +16,7 @@ The conteiner is built with use of lightweight alpine and Python utilises only t
 The DNS over TLS proxy can be used to resolve DNS via a secure channel by any client including git, nslookup or a custom built client, etc..
 
 Overview
+
 ![DNS over TLS Diagram](files/diagram.png)
 
 The proxy listens on incoming DNS request via TCP and UDP and upstreams the requests to Cloudflare 1.1.1.1 secure resolver on port 853.
@@ -27,6 +28,7 @@ Responses received from Cloudflare are parsed and presented to the user.
 #### 2.1. Before you start
 The DNS over TLS proxy runs in a Docker container and requires Docker or another container runtime to be installed.
 - Install [Docker](https://docs.docker.com/engine/install)
+
 Git is also required to clone this repository
 - Install [Git](https://git-scm.com/downloads)
 
